@@ -1,3 +1,7 @@
+locals {
+  _identity_type = var.identity_type == "Both" ? "SystemAssigned, UserAssigned" : var.identity_type
+}
+
 resource "azurerm_resource_group" "resource_group" {
   count    = var.create_resource_group ? 1 : 0
   name     = var.resource_group_name
@@ -10,7 +14,7 @@ data "azurerm_resource_group" "resource_group" {
   name  = var.resource_group_name
 }
 
-resource "azurerm_container_registry" "acr" {
+resource "azurerm_container_registry" "registry" {
   name                          = var.registry_name
   resource_group_name           = azurerm_resource_group.resource_group[0].name
   location                      = azurerm_resource_group.resource_group[0].location
@@ -50,9 +54,18 @@ resource "azurerm_container_registry" "acr" {
     }
   }
 
-  /* identity   = "sdsd" #(Optional) An identity block as defined below.
+  dynamic "identity" {
+    for_each = toset(local._identity_type == null ? [] : [""])
+    content {
+      type         = local._identity_type
+      identity_ids = var.identity_list
+    }
+  }
+
+  /* 
   encryption = "sdsd" #(Optional) An encryption block as documented below.
-  network_rule_set = "sdsd" #(Optional) A network_rule_set block as documented below. */
+  network_rule_set = "sdsd" #(Optional) A network_rule_set block as documented below. 
+    */
 
 
 }
