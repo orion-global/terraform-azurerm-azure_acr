@@ -6,6 +6,12 @@ on:
     branches:
       - prod
 
+env:
+  TF_AZURE_SUBSCRIPTION_ID: ${{ secrets.TF_AZURE_SUBSCRIPTION_ID }}
+  TF_AZURE_AZURE_CLIENT_ID: ${{ secrets.TF_AZURE_AZURE_CLIENT_ID }}
+  TF_AZURE_AZURE_CLIENT_SECRET: ${{ secrets.TF_AZURE_AZURE_CLIENT_SECRET }}
+  TF_AZURE_AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
 jobs:
   plan_job:
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
