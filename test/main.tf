@@ -17,7 +17,7 @@ module "module_test" {
   }
 
   identity_type = "SystemAssigned"
-  identity_list = ["/subscriptions/79e2e079-1802-44be-a245-732af5acca51/resourceGroups/MC_repo-dvps-prueba-rg_cluster-dvps-prueba_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/cluster-dvps-prueba-agentpool"]
+  identity_list = ["/subscriptions/XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/resourceGroups/firstrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/firstidentity"]
 
   tags = {
     "tempo" = "value1"
