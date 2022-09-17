@@ -48,9 +48,11 @@ variable "location_name" {
   default     = null
 }
 
-#------------------------------------------------------------------------------------------
-# Premium SKU Only variables
-#------------------------------------------------------------------------------------------
+variable "tags" {
+  description = "(Optional) A mapping of tags to assign to the resource. Use the map of {tag = value} format."
+  type        = map(string)
+  default     = {}
+}
 
 variable "enable_quarantine_policy" {
   description = "(Optional) Boolean value that indicates whether quarantine policy is enabled. Defaults to false."
@@ -73,6 +75,24 @@ variable "enable_zone_redundancy" {
 variable "enable_trust_policy" {
   description = "(Optional) Boolean value that indicates whether the policy is enabled."
   type        = bool
+  default     = null
+}
+
+variable "enable_anonymous_pull" {
+  description = "(Optional) Whether allows anonymous (unauthenticated) pull access to this Container Registry? Defaults to false. This is only supported on resources with the Standard or Premium SKU."
+  type        = bool
+  default     = null
+}
+
+variable "enable_data_endpoint" {
+  description = "(Optional) Whether to enable dedicated data endpoints for this Container Registry? Defaults to false. This is only supported on resources with the Premium SKU."
+  type        = bool
+  default     = null
+}
+
+variable "network_bypass" {
+  description = "(Optional) Whether to allow trusted Azure services to access a network restricted Container Registry? Possible values are None and AzureServices. Defaults to AzureServices."
+  type        = string
   default     = null
 }
 

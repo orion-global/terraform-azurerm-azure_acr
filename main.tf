@@ -2,6 +2,7 @@ resource "azurerm_resource_group" "resource_group" {
   count    = var.create_resource_group ? 1 : 0
   name     = var.resource_group_name
   location = var.location_name
+  tags     = var.tags
 }
 
 data "azurerm_resource_group" "resource_group" {
@@ -16,9 +17,13 @@ resource "azurerm_container_registry" "acr" {
   sku                           = var.sku
   admin_enabled                 = var.enable_admin
   public_network_access_enabled = var.enable_public_access
+  network_rule_bypass_option    = var.network_bypass
   quarantine_policy_enabled     = var.enable_quarantine_policy
   export_policy_enabled         = var.enable_export_policy
   zone_redundancy_enabled       = var.enable_zone_redundancy
+  data_endpoint_enabled         = var.enable_data_endpoint
+  anonymous_pull_enabled        = var.enable_anonymous_pull
+
   dynamic "retention_policy" {
     for_each = toset(var.retention_policy == null ? [] : [""])
     content {
@@ -33,18 +38,14 @@ resource "azurerm_container_registry" "acr" {
     }
   }
 
+  tags = var.tags
 
+  /* identity   = "sdsd" #(Optional) An identity block as defined below.
+  encryption = "sdsd" #(Optional) An encryption block as documented below.
 
-  /*   identity                   = "sdsd" #(Optional) An identity block as defined below.
-  encryption                 = "sdsd" #(Optional) An encryption block as documented below.
-  anonymous_pull_enabled     = "sdsd" #(Optional) Whether allows anonymous (unauthenticated) pull access to this Container Registry? Defaults to false. This is only supported on resources with the Standard or Premium SKU.
-  data_endpoint_enabled      = "sdsd" #(Optional) Whether to enable dedicated data endpoints for this Container Registry? Defaults to false. This is only supported on resources with the Premium SKU.
-  network_rule_bypass_option = "sdsd" #(Optional) Whether to allow trusted Azure services to access a network restricted Container Registry? Possible values are None and AzureServices. Defaults to AzureServices.
-
-  tags             = "sdsd" #(Optional) A mapping of tags to assign to the resource.
+  tags             = "sdsd" #
   georeplications  = "sdsd" #(Optional) A georeplications block as documented below.
   network_rule_set = "sdsd" #(Optional) A network_rule_set block as documented below. */
-
 
 
 }
