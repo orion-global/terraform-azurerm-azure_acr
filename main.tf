@@ -61,11 +61,4 @@ resource "azurerm_container_registry" "registry" {
       identity_ids = var.identity_list
     }
   }
-
-  /* 
-  encryption = "sdsd" #(Optional) An encryption block as documented below.
-  network_rule_set = "sdsd" #(Optional) A network_rule_set block as documented below. 
-    */
-
-
 }
