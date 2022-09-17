@@ -23,6 +23,7 @@ resource "azurerm_container_registry" "acr" {
   zone_redundancy_enabled       = var.enable_zone_redundancy
   data_endpoint_enabled         = var.enable_data_endpoint
   anonymous_pull_enabled        = var.enable_anonymous_pull
+  tags                          = var.tags
 
   dynamic "retention_policy" {
     for_each = toset(var.retention_policy == null ? [] : [""])
@@ -38,13 +39,19 @@ resource "azurerm_container_registry" "acr" {
     }
   }
 
-  tags = var.tags
+  dynamic "georeplications" {
+    for_each = (var.sku == "Premium" ? var.replicas : {})
+    iterator = geozone
+    content {
+      location                  = geozone.key
+      zone_redundancy_enabled   = geozone.value.enable_zone_redundancy
+      regional_endpoint_enabled = geozone.value.enable_regional_endpoint
+      tags                      = var.tags
+    }
+  }
 
   /* identity   = "sdsd" #(Optional) An identity block as defined below.
   encryption = "sdsd" #(Optional) An encryption block as documented below.
-
-  tags             = "sdsd" #
-  georeplications  = "sdsd" #(Optional) A georeplications block as documented below.
   network_rule_set = "sdsd" #(Optional) A network_rule_set block as documented below. */
 
 

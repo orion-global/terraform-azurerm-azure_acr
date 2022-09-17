@@ -97,10 +97,19 @@ variable "network_bypass" {
 }
 
 variable "retention_policy" {
-  description = "DNS policy setup for the VPC."
+  description = "(Opcional) Object with values of retention policy, contains boolean value that indicates whether the policy is enabled and number of days to retain."
   type = object({
     enabled = bool
     days    = number
   })
+  default = null
+}
+
+variable "replicas" {
+  description = "(Opcional) Object with values of retention policy, contains boolean value that indicates whether the policy is enabled and number of days to retain. Use the format 'identifier of region' = { enable_zone_redundancy = true/false, enable_regional_endpoint = true/false}"
+  type = map(object({
+    enable_zone_redundancy   = bool
+    enable_regional_endpoint = bool
+  }))
   default = null
 }

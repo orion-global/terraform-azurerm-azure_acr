@@ -11,6 +11,12 @@ module "module_test" {
     enabled = true
     days    = 10
   }
+  replicas = {
+    "East US 2" = { enable_zone_redundancy = true, enable_regional_endpoint = true }
+    "West US 2" = { enable_zone_redundancy = false, enable_regional_endpoint = true }
+  }
+
+
 
   tags = {
     "tempo" = "value1"
