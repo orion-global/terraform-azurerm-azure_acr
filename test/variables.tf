@@ -25,3 +25,9 @@ variable "AZURE_TENANT_ID" {
   type        = string
   default     = null
 }
+
+variable "MODULE_NAME" {
+  description = "Name of the module. Dynamic variable for testing execution obtained from the name of the repository in the pipeline."
+  type        = string
+  default     = null
+}
