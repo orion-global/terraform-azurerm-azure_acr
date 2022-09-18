@@ -26,14 +26,14 @@ resource "azurerm_container_registry" "registry" {
   tags                          = var.tags
 
   dynamic "retention_policy" {
-    for_each = toset(var.retention_policy == null ? [] : [""])
+    for_each = toset(var.retention_policy == null && var.sku == "Premium" ? [] : [""])
     content {
       days    = var.retention_policy.days
       enabled = var.retention_policy.enabled
     }
   }
   dynamic "trust_policy" {
-    for_each = toset(var.enable_trust_policy == null ? [] : [""])
+    for_each = toset(var.enable_trust_policy && var.sku == "Premium" == null ? [] : [""])
     content {
       enabled = var.enable_trust_policy
     }
