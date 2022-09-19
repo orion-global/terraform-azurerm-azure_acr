@@ -1,4 +1,4 @@
-name: Terraform Execution
+name: Terraform Module Test
 
 on:
   pull_request:
