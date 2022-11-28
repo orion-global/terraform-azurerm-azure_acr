@@ -1,5 +1,5 @@
 module "module_test" {
-  source                = "../../terraform-azurerm-azure_acr"
+  source                = "../.."
   create_resource_group = true
   resource_group_name   = "temporal"
   location_name         = "East US"
