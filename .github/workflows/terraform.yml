@@ -10,7 +10,7 @@ env:
   TF_VAR_AZURE_SUBSCRIPTION_ID: ${{ secrets.DEV_AZURE_SUBSCRIPTION_ID }}
   TF_VAR_AZURE_CLIENT_ID: ${{ secrets.DEV_AZURE_CLIENT_ID }}
   TF_VAR_AZURE_CLIENT_SECRET: ${{ secrets.DEV_AZURE_CLIENT_SECRET }}
-  TF_VAR_AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  TF_VAR_AZURE_TENANT_ID: ${{ secrets.DEV_AZURE_TENANT_ID }}
 
 jobs:
   plan_job:
@@ -105,3 +105,17 @@ jobs:
                 body: output
               })
             }
+
+      - name: Evaluate the results
+        shell: pwsh
+        env:
+          PLAN: "${{ steps.plan.outcome }}"
+        run: |
+          if ($ENV:PLAN -eq "Failure" ) {
+              Write-Output "Failed planning for Terraform"
+              exit 1
+          }
+          else {
+              Write-Output "Snyk doesn't found issues. Passing the checks."
+              exit 0
+          }
