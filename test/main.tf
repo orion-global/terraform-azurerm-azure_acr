@@ -16,9 +16,6 @@ module "module_test" {
     "West US 2" = { enable_zone_redundancy = false, enable_regional_endpoint = true }
   }
 
-  identity_type = "SystemAssigned"
-  identity_list = ["/subscriptions/XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX/resourceGroups/firstrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/firstidentity"]
-
   tags = {
     "tempo" = "value1"
     "tag2"  = "value2"

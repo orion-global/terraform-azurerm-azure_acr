@@ -1,4 +1,4 @@
-name: Terraform Execution
+name: Terraform Analysis
 
 on:
   pull_request:
@@ -7,10 +7,10 @@ on:
       - prod
 
 env:
-  TF_VAR_AZURE_SUBSCRIPTION_ID: ${{ secrets.TF_VAR_AZURE_SUBSCRIPTION_ID }}
-  TF_VAR_AZURE_CLIENT_ID: ${{ secrets.TF_VAR_AZURE_CLIENT_ID }}
-  TF_VAR_AZURE_CLIENT_SECRET: ${{ secrets.TF_VAR_AZURE_CLIENT_SECRET }}
-  TF_VAR_AZURE_TENANT_ID: ${{ secrets.TF_VAR_AZURE_TENANT_ID }}
+  TF_VAR_AZURE_SUBSCRIPTION_ID: ${{ secrets.DEV_AZURE_SUBSCRIPTION_ID }}
+  TF_VAR_AZURE_CLIENT_ID: ${{ secrets.DEV_AZURE_CLIENT_ID }}
+  TF_VAR_AZURE_CLIENT_SECRET: ${{ secrets.DEV_AZURE_CLIENT_SECRET }}
+  TF_VAR_AZURE_TENANT_ID: ${{ secrets.DEV_AZURE_TENANT_ID }}
 
 jobs:
   plan_job:
@@ -19,11 +19,9 @@ jobs:
     name: "Plan phase"
     steps:
       - name: Checkout
-        uses: actions/checkout@master
-        with:
-          ref: ${{ github.ref }}
+        uses: actions/checkout@v3
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
@@ -46,11 +44,12 @@ jobs:
         continue-on-error: true
 
       - uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
         env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+          ECODE: "Exit Code: ${{ steps.plan.outputs.exitcode }}"
+          PLAN: "Plan results: \n${{ steps.plan.outputs.stdout }}"
+          ERROR: "Errors in plan: \n${{ steps.plan.outputs.stderr }}"
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.ACTIONS_COMMENTS }}
           script: |
             // 1. Retrieve existing bot comments for the PR
             const { data: comments } = await github.rest.issues.listComments({
@@ -59,7 +58,7 @@ jobs:
               issue_number: context.issue.number,
             })
             const botComment = comments.find(comment => {
-              return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style')
+              return comment.user.login === 'orion-global-bot' && comment.body.includes('Terraform Format and Style')
             })
 
             // 2. Prepare format of the comment
@@ -76,15 +75,19 @@ jobs:
 
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
-            <details><summary>Show Plan</summary>
+            <details><summary>Show plan results:</summary>
 
             \`\`\`\n
+            ${process.env.ECODE}
+            ------------------------------
             ${process.env.PLAN}
+            ------------------------------
+            ${process.env.ERROR}
             \`\`\`
 
             </details>
 
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
 
             // 3. If we have a comment, update it, otherwise create a new one
             if (botComment) {
@@ -102,3 +105,17 @@ jobs:
                 body: output
               })
             }
+
+      - name: Evaluate the results
+        shell: pwsh
+        env:
+          PLAN: "${{ steps.plan.outcome }}"
+        run: |
+          if ($ENV:PLAN -eq "Failure" ) {
+              Write-Output "Failed planning for Terraform"
+              exit 1
+          }
+          else {
+              Write-Output "Snyk doesn't found issues. Passing the checks."
+              exit 0
+          }
