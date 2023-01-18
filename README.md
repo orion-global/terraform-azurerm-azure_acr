@@ -5,6 +5,7 @@ Módulo para la creación de un Azure Container Registry (ACR) en Azure.
 **NOTA**: Se tiene pendiente el desarrollo de los siguientes parámetros:
 - encryption
 - network_rule_set
+
 ---
 
 ## Usage
@@ -93,6 +94,8 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_admin_password"></a> [admin\_password](#output\_admin\_password) | n/a |
+| <a name="output_admin_username"></a> [admin\_username](#output\_admin\_username) | n/a |
 | <a name="output_registry_id"></a> [registry\_id](#output\_registry\_id) | n/a |
 | <a name="output_registry_name"></a> [registry\_name](#output\_registry\_name) | n/a |
 <!-- END_TF_DOCS -->
